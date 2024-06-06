@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="../plugin/plugin-html-multi-slider-response.js"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+      img {
+        width: 300px;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+      default_iti: 250, 
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    var trial_1 = {
+      type: jsPsychHtmlMultiSliderResponse,
+      stimulus: '<div style="margin: 50px auto; width: 100px; height: 100px; background-color: rgb(46, 26, 122);"></div>' +
+      '<p>How likely do you think it is that someone would use these sentences? <br> Make sure that your responses sum up to 100.</p>',
+      num_sliders: 4,
+      force_total: 100,
+      slider_labels: ["You might get a blue one", "You'll probably get a blue one", "something else", "something else 2"],
+      slider_width: 800,
+      prompt: ''
+    };
+
+   
+    jsPsych.run([trial_1]);
+
+  </script>
+</html>
