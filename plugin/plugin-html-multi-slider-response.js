@@ -193,40 +193,44 @@ var jsPsychHtmlMultiSliderResponse = (function (jspsych) {
               response: null,
           };
 
+
+          var change_handler = function(e, force_total) {
+            var id_parts = e.target.id.split("-");
+            var j = id_parts[id_parts.length -1];
+            display_element
+            .querySelector("#jspsych-html-multi-slider-response-display-" + j)
+            .value = e.target.value;
+            if (force_total && trial.force_total != null) {
+                var total = 0;
+                display_element
+                    .querySelectorAll(".jspsych-slider").forEach(s => {
+                    total += s.valueAsNumber;
+                    });
+                    if (total > trial.force_total) {
+                    e.target.value = e.target.valueAsNumber - (total - trial.force_total);
+                    display_element
+                        .querySelector("#jspsych-html-multi-slider-response-display-" + j)
+                        .value = e.target.value;
+                    }
+                    
+                    if (total < trial.force_total * 0.99) {
+                    display_element
+                    .querySelector("#jspsych-html-slider-response-next")
+                    .disabled =  true;
+                    } else {
+                    display_element
+                    .querySelector("#jspsych-html-slider-response-next")
+                    .disabled =  false;
+                    }
+
+            }
+          }
+
           display_element
           .querySelectorAll(".jspsych-slider").forEach(slider => {
-            slider.addEventListener("change", function(e) {
-                var id_parts = e.target.id.split("-");
-                var j = id_parts[id_parts.length -1];
-                display_element
-                .querySelector("#jspsych-html-multi-slider-response-display-" + j)
-                .value = e.target.value;
-                if (trial.force_total != null) {
-                    var total = 0;
-                    display_element
-                     .querySelectorAll(".jspsych-slider").forEach(s => {
-                        total += s.valueAsNumber;
-                     });
-                     if (total > trial.force_total) {
-                        e.target.value = e.target.valueAsNumber - (total - trial.force_total);
-                        display_element
-                         .querySelector("#jspsych-html-multi-slider-response-display-" + j)
-                         .value = e.target.value;
-                     }
-                     
-                     if (total < trial.force_total * 0.99) {
-                        display_element
-                        .querySelector("#jspsych-html-slider-response-next")
-                        .disabled =  true;
-                     } else {
-                        display_element
-                        .querySelector("#jspsych-html-slider-response-next")
-                        .disabled =  false;
-                     }
-
-                }
-            });
-          });
+            slider.addEventListener("input", e => change_handler(e, false));
+            slider.addEventListener("change", e => change_handler(e, true));
+        });
           
 
           const end_trial = () => {
