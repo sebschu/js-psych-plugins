@@ -148,12 +148,25 @@ var jsPsychHtmlMultiSliderResponse = (function (jspsych) {
                   '" id="jspsych-html-multi-slider-response-response-' + j +  '"></input>';
             html += '</span>';
             html += '<span style="display:block; width:10%; float: left;">';
-            html += '<input type="text" size="3" style="width: 30px" value="0" disabled="disabled" id="jspsych-html-multi-slider-response-display-' + j +'"></input>'
+            //html += '<input type="number" size="3" style="width: 45px" placeholder="0" min="0" max="100" class="jspsych-number" id="jspsych-html-multi-slider-response-display-' + j +'"></input>'
+            html +=
+              '<input type="number" class="jspsych-number" size="3" style="width: 45px" placeholder="' +
+                  trial.slider_start +
+                  '" min="' +
+                  trial.min +
+                  '" max="' +
+                  trial.max +
+                  '" step="' +
+                  trial.step +
+                  '" id="jspsych-html-multi-slider-response-display-' + j +  '"></input>';
             html += '</span>';
             
             html += '</div>';
             
           }
+          //debug check total
+          //html += '<p>total: </p><input type="text" value="" id="debug-total"></input>';
+
           html += "<div>";
           for (var j = 0; j < trial.labels.length; j++) {
               var label_width_perc = 100 / (trial.labels.length - 1);
@@ -194,7 +207,7 @@ var jsPsychHtmlMultiSliderResponse = (function (jspsych) {
           };
 
 
-          var change_handler = function(e, force_total) {
+          var slider_change_handler = function(e, force_total) {
             var id_parts = e.target.id.split("-");
             var j = id_parts[id_parts.length -1];
             display_element
@@ -206,6 +219,7 @@ var jsPsychHtmlMultiSliderResponse = (function (jspsych) {
                     .querySelectorAll(".jspsych-slider").forEach(s => {
                     total += s.valueAsNumber;
                     });
+
                     if (total > trial.force_total) {
                     e.target.value = e.target.valueAsNumber - (total - trial.force_total);
                     display_element
@@ -226,10 +240,54 @@ var jsPsychHtmlMultiSliderResponse = (function (jspsych) {
             }
           }
 
+          var number_change_handler = function(e, force_total) {
+            var id_parts = e.target.id.split("-");
+            var j = id_parts[id_parts.length -1];
+            display_element
+            .querySelector("#jspsych-html-multi-slider-response-response-" + j)
+            .value = e.target.value;
+            if (force_total && trial.force_total != null) {
+                var total = 0;
+                display_element
+                    .querySelectorAll(".jspsych-number").forEach(s => {
+                    total += Number(s.value);
+                    });
+
+                    // debug check total
+                    // display_element
+                    // .querySelector("#debug-total")
+                    // .value = total;
+
+                    if (total > trial.force_total) {
+                    e.target.value = e.target.valueAsNumber - (total - trial.force_total);
+                    display_element
+                        .querySelector("#jspsych-html-multi-slider-response-response-" + j)
+                        .value = e.target.value;
+                    }
+                    
+                    if (total < trial.force_total * 0.99) {
+                    display_element
+                    .querySelector("#jspsych-html-slider-response-next")
+                    .disabled =  true;
+                    } else {
+                    display_element
+                    .querySelector("#jspsych-html-slider-response-next")
+                    .disabled =  false;
+                    }
+
+            }
+          }
+
           display_element
           .querySelectorAll(".jspsych-slider").forEach(slider => {
-            slider.addEventListener("input", e => change_handler(e, false));
-            slider.addEventListener("change", e => change_handler(e, true));
+            slider.addEventListener("input", e => slider_change_handler(e, false));
+            slider.addEventListener("change", e => slider_change_handler(e, true));
+        });
+
+          display_element
+          .querySelectorAll(".jspsych-number").forEach(number => {
+            //slider.addEventListener("input", e => number_change_handler(e, false));
+            number.addEventListener("change", e => number_change_handler(e, true));
         });
           
 
