@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="../plugin/plugin-html-coin-betting-response.js"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+      #jspsych-html-coin-betting-response-wrapper {
+        width: 800px;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+      default_iti: 250, 
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    var trial_1 = {
+      type: jsPsychHtmlCoinBettingResponse,
+      stimulus: '<div style="margin: 50px auto; width: 100px; height: 100px; background-color: rgb(46, 26, 122);"></div>' +
+      '<p>Which gumball machine do you think is on the table? Use the "+" and "&ndash;" buttons to distribute 10 coins across the likely gumball machines.</p>',
+      images: ["./example-stimuli/gumball_0.png", 
+               "./example-stimuli/gumball_10.png",
+               "./example-stimuli/gumball_25.png",
+               "./example-stimuli/gumball_40.png",
+               "./example-stimuli/gumball_50.png",
+               "./example-stimuli/gumball_60.png",
+               "./example-stimuli/gumball_75.png",
+               "./example-stimuli/gumball_90.png",
+               "./example-stimuli/gumball_100.png"],
+    };
+
+   
+    jsPsych.run([trial_1]);
+
+  </script>
+</html>
